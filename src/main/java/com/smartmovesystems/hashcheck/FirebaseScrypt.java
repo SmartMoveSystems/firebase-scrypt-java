@@ -12,6 +12,9 @@ import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.Key;
 
+/**
+ * Java adaptation of https://github.com/firebase/scrypt
+ */
 public class FirebaseScrypt {
 
     private static final Charset CHARSET = StandardCharsets.UTF_8;
