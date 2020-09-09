@@ -22,6 +22,8 @@ import java.util.Arrays;
 public class FirebaseScrypt {
 
     private static final Charset CHARSET = StandardCharsets.US_ASCII;
+    private static final String CIPHER = "AES/CTR/NoPadding";
+    private static final String CIPHER_OPENSSL = "aes-256-ctr";
 
     public static byte[] hashWithSalt(String passwd, String salt, String saltSep, int rounds, int memcost) throws GeneralSecurityException {
         int N = 1 << memcost;
@@ -111,11 +113,11 @@ public class FirebaseScrypt {
     public static byte[] encrypt(final byte[] signer, final byte[] derivedKey) {
         try {
             final Key key = generateKeyFromString(derivedKey);
-            final byte[] nonce = ByteBuffer.allocate(12).putLong(0).array();
+            final byte[] nonce = ByteBuffer.allocate(8).putLong(0).array();
             byte[] iv = new byte[16];
             System.arraycopy(nonce, 0, iv, 0, nonce.length);
             IvParameterSpec ivSpec = new IvParameterSpec(iv);
-            final Cipher c = Cipher.getInstance("AES/CTR/NoPadding");
+            final Cipher c = Cipher.getInstance(CIPHER);
             c.init(Cipher.ENCRYPT_MODE, key, ivSpec);
             return c.doFinal(signer);
         } catch(Exception ex) {
@@ -131,7 +133,7 @@ public class FirebaseScrypt {
             byte[] iv = new byte[16];
             System.arraycopy(nonce, 0, iv, 0, nonce.length);
             IvParameterSpec ivSpec = new IvParameterSpec(iv);
-            final Cipher c = Cipher.getInstance("AES/CTR/NoPadding");
+            final Cipher c = Cipher.getInstance(CIPHER);
             c.init(Cipher.DECRYPT_MODE, key, ivSpec);
             return c.doFinal(signer);
         } catch(Exception ex) {
@@ -142,7 +144,7 @@ public class FirebaseScrypt {
 
     public static byte[] encryptOpenSSL(byte[] plaintext, char[] pwd) {
         try {
-            return OpenSSL.encrypt("aes-256-ctr", pwd, plaintext, false, false);
+            return OpenSSL.encrypt(CIPHER_OPENSSL, pwd, plaintext, false, false);
         } catch(Exception ex) {
             System.err.print(ex);
             return null;
@@ -151,7 +153,7 @@ public class FirebaseScrypt {
 
     public static byte[] decryptOpenSSL(byte[] encrypted, final char[] pwd) {
         try {
-            return OpenSSL.decrypt("aes-256-ctr", pwd, encrypted);
+            return OpenSSL.decrypt(CIPHER_OPENSSL, pwd, encrypted);
         } catch(Exception ex) {
             System.err.print(ex);
             return null;
