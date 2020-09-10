@@ -6,7 +6,6 @@ import org.apache.commons.codec.binary.Base64;
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
-import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -27,12 +26,12 @@ public class FirebaseScrypt {
 
     /**
      * Generates the scrypt hash of the user's password using the specified parameneters
-     * @param passwd
-     * @param salt
-     * @param saltSep
-     * @param rounds
-     * @param memcost
-     * @return
+     * @param passwd The user's raw password
+     * @param salt The salt, base64-encoded
+     * @param saltSep The salt separator, base64-encoded
+     * @param rounds Scrypt rounds parameter
+     * @param memcost Scrypt memost parameter
+     * @return Byte array result of Scrypt hash
      * @throws GeneralSecurityException
      */
     public static byte[] hashWithSalt(String passwd, String salt, String saltSep, int rounds, int memcost) throws GeneralSecurityException {
@@ -55,13 +54,12 @@ public class FirebaseScrypt {
      * Check if the password hashes to the known ciphertext
      * @param passwd the user's password
      * @param knownCipherText the known password hash after encryption
-     * @param salt the salt
-     * @param saltSep the salt separator
-     * @param signer base64 signer key from firebase
+     * @param salt the salt, base64-encoded
+     * @param saltSep the salt separator, base64-encoded
+     * @param signer base64 signer key from firebase project
      * @param rounds rounds scrypt parameter
      * @param memcost memcost scrypt parameter
-     * @return
-     * @throws UnsupportedEncodingException
+     * @return True if the hashed, encrypted password matches the known cipertext, false otherwise
      * @throws GeneralSecurityException
      */
     public static boolean check(String passwd, String knownCipherText, String salt, String saltSep, String signer, int rounds, int memcost) throws GeneralSecurityException {
