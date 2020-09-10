@@ -6,7 +6,6 @@ import org.apache.commons.codec.binary.Base64;
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
-import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
@@ -82,10 +81,7 @@ public class FirebaseScrypt {
     public static byte[] encrypt(byte[] signer, byte[] derivedKey) {
         try {
             Key key = generateKeyFromString(derivedKey);
-            byte[] nonce = ByteBuffer.allocate(8).putLong(0).array();
-            byte[] iv = new byte[16];
-            System.arraycopy(nonce, 0, iv, 0, nonce.length);
-            IvParameterSpec ivSpec = new IvParameterSpec(iv);
+            IvParameterSpec ivSpec = new IvParameterSpec(new byte[16]);
             Cipher c = Cipher.getInstance(CIPHER);
             c.init(Cipher.ENCRYPT_MODE, key, ivSpec);
             return c.doFinal(signer);
@@ -98,10 +94,7 @@ public class FirebaseScrypt {
     public static byte[] decrypt(byte[] signer, byte[] derivedKey) {
         try {
             Key key = generateKeyFromString(derivedKey);
-            byte[] nonce = ByteBuffer.allocate(8).putLong(0).array();
-            byte[] iv = new byte[16];
-            System.arraycopy(nonce, 0, iv, 0, nonce.length);
-            IvParameterSpec ivSpec = new IvParameterSpec(iv);
+            IvParameterSpec ivSpec = new IvParameterSpec(new byte[16]);
             Cipher c = Cipher.getInstance(CIPHER);
             c.init(Cipher.DECRYPT_MODE, key, ivSpec);
             return c.doFinal(signer);
