@@ -64,7 +64,7 @@ public class FirebaseScrypt {
      * @throws UnsupportedEncodingException
      * @throws GeneralSecurityException
      */
-    public static boolean check(String passwd, String knownCipherText, String salt, String saltSep, String signer, int rounds, int memcost) throws UnsupportedEncodingException, GeneralSecurityException {
+    public static boolean check(String passwd, String knownCipherText, String salt, String saltSep, String signer, int rounds, int memcost) throws GeneralSecurityException {
         // hashing password
         byte[] hashedBytes = hashWithSalt(passwd, salt, saltSep, rounds, memcost);
 
