@@ -29,29 +29,9 @@ public class FirebaseScryptTest {
         int rounds = 8;
         int memcost = 14;
 
-        String expectedHash = "1zRr/0fU8CFiUw2kxLck+k/kQ5MX36IHCy32Vvm+etmf6z7fLuaFdA7mdt2RXPL1qmoGZJT1KVwxhQTyTZaBog==";
+        String expectedHash = "lSrfV15cpx95/sZS2W9c9Kp6i/LVgQNDNC/qzrCnh1SAyZvqmZqAjTdn3aoItz+VHjoZilo78198JAdRuid5lQ==";
 
         assertTrue(FirebaseScrypt.check(passwd, expectedHash, salt, saltSep, signerKey, rounds, memcost));
-    }
-
-    /**
-     * Tests the complete scrypt + AES encryption process for the custom firebase hashing algorithm
-     * Uses OpenSSL's AES 256 implementation
-     * @throws UnsupportedEncodingException
-     * @throws GeneralSecurityException
-     */
-    @Test
-    public void knownCiphertextTestOpenSSl() throws UnsupportedEncodingException, GeneralSecurityException {
-        String passwd = "user1password";
-        String salt = "42xEC+ixf3L2lw==";
-        String saltSep = "Bw==";
-        String signerKey = "jxspr8Ki0RYycVU8zykbdLGjFQ3McFUH0uiiTvC8pVMXAn210wjLNmdZJzxUECKbm0QsEmYUSDzZvpjeJ9WmXA==";
-        int rounds = 8;
-        int memcost = 14;
-
-        String expectedHash = "1zRr/0fU8CFiUw2kxLck+k/kQ5MX36IHCy32Vvm+etmf6z7fLuaFdA7mdt2RXPL1qmoGZJT1KVwxhQTyTZaBog==";
-
-        assertTrue(FirebaseScrypt.checkWithOpenSSl(passwd, expectedHash, salt, saltSep, signerKey, rounds, memcost));
     }
 
     /**
@@ -73,24 +53,10 @@ public class FirebaseScryptTest {
         assertEquals(expectedHash, new String(Base64.encodeBase64(scryptedHash)));
     }
 
-    @Test
-    public void encryptDecryptTestOpenSSL() throws GeneralSecurityException {
-        String passwd = "user1password";
-        String salt = "42xEC+ixf3L2lw==";
-        String saltSep = "Bw==";
-        String signerKey = "jxspr8Ki0RYycVU8zykbdLGjFQ3McFUH0uiiTvC8pVMXAn210wjLNmdZJzxUECKbm0QsEmYUSDzZvpjeJ9WmXA==";
-        int rounds = 8;
-        int memcost = 14;
-
-        // hashing password
-        byte[] hashedBytes = hashWithSalt(passwd, salt, saltSep, rounds, memcost);
-        byte[] signerBytes = Base64.decodeBase64(signerKey.getBytes(StandardCharsets.US_ASCII));
-        byte[] cipherBytes = encryptOpenSSL(signerBytes, bytesToChars(hashedBytes));
-        byte[] decrypted = decryptOpenSSL(cipherBytes, bytesToChars(hashedBytes));
-
-        assertTrue(Arrays.equals(decrypted, signerBytes));
-    }
-
+    /**
+     * Validates basic encryption and decryption with AES CTR
+     * @throws GeneralSecurityException
+     */
     @Test
     public void encryptDecryptTest() throws GeneralSecurityException {
 
@@ -109,5 +75,4 @@ public class FirebaseScryptTest {
 
         assertTrue(Arrays.equals(decrypted, signerBytes));
     }
-
 }
