@@ -10,7 +10,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.Key;
-import java.util.Arrays;
+import java.security.MessageDigest;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -71,7 +71,7 @@ public class FirebaseScrypt {
 
         byte[] knownCipherTextBytes = Base64.decodeBase64(knownCipherText.getBytes(CHARSET));
 
-        return Arrays.equals(knownCipherTextBytes, cipherTextBytes);
+        return MessageDigest.isEqual(knownCipherTextBytes, cipherTextBytes);
     }
 
     private static Key generateKeyFromString(byte[] keyVal) {
